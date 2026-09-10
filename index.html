@@ -4,633 +4,408 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fangeul — Korean Tools for K-pop Fans</title>
-<meta name="description" content="Type Korean with English keys, convert between English and Korean, get romanized pronunciation, and share fan phrases — all from a floating bubble.">
+<meta name="description" content="Keep watching. Write in Korean. Type, check pronunciation, and copy fan phrases from a floating bubble over your Android apps.">
 <meta property="og:title" content="Fangeul — Korean Tools for K-pop Fans">
-<meta property="og:description" content="Type Korean with English keys, convert between English and Korean, get romanized pronunciation, and share fan phrases.">
+<meta property="og:description" content="Korean, one tap away. A floating bubble for Korean typing, pronunciation, and fan phrases.">
 <meta property="og:image" content="assets/store/feature-graphic.png">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/store/app-icon-512.png">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg-dark: #0f1923;
-    --bg-card: #182633;
-    --accent: #3dd6b5;
-    --accent-glow: rgba(61, 214, 181, 0.15);
-    --purple: #9b6dff;
-    --text: #e8edf2;
-    --text-dim: #8b9bb0;
-    --gradient: linear-gradient(135deg, #3dd6b5 0%, #9b6dff 100%);
-  }
-
-  html { scroll-behavior: smooth; overflow-x: hidden; }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-dark);
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
-    width: 100%;
-  }
-
-  /* --- NAV --- */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1rem 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(15, 25, 35, 0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(61, 214, 181, 0.1);
-  }
-  .nav-brand {
-    display: flex; align-items: center; gap: 0.75rem;
-    text-decoration: none; color: var(--text);
-  }
-  .nav-brand img { width: 36px; height: 36px; border-radius: 8px; }
-  .nav-brand span { font-weight: 700; font-size: 1.1rem; }
-  .nav-links { display: flex; gap: 2rem; align-items: center; }
-  .nav-links a {
-    color: var(--text-dim); text-decoration: none;
-    font-size: 0.9rem; font-weight: 500;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--accent); }
-  .lang-btn {
-    background: none; border: 1px solid rgba(139, 155, 176, 0.3);
-    color: var(--text-dim); font-size: 0.8rem; font-weight: 500;
-    padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* --- HERO --- */
-  .hero {
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 8rem 2rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; top: -20%; left: -10%;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(61, 214, 181, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero::after {
-    content: '';
-    position: absolute; bottom: -10%; right: -10%;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(155, 109, 255, 0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-content {
-    max-width: 1200px; width: 100%;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4rem; align-items: center;
-  }
-  .hero-text { z-index: 1; }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--accent-glow);
-    border: 1px solid rgba(61, 214, 181, 0.25);
-    border-radius: 100px;
-    padding: 0.4rem 1rem;
-    font-size: 0.8rem; font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-  }
-  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  h1 {
-    font-size: clamp(2.5rem, 5vw, 3.8rem);
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-  }
-  h1 .gradient-text {
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .hero-desc {
-    font-size: 1.15rem;
-    color: var(--text-dim);
-    margin-bottom: 2rem;
-    max-width: 480px;
-  }
-  .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--gradient);
-    color: #fff; font-weight: 600;
-    padding: 0.9rem 2rem;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(61, 214, 181, 0.25);
-  }
-  .btn-primary svg { width: 20px; height: 20px; }
-  .btn-secondary {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    border: 1px solid rgba(139, 155, 176, 0.3);
-    color: var(--text-dim);
-    padding: 0.9rem 2rem;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 1rem; font-weight: 500;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-  .hero-visual {
-    display: flex; justify-content: center; z-index: 1;
-    position: relative;
-  }
-  .hero-phone {
-    width: 280px;
-    border-radius: 24px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-    transform: perspective(1000px) rotateY(-5deg);
-    transition: transform 0.4s;
-  }
-  .hero-phone:hover { transform: perspective(1000px) rotateY(0deg); }
-  .hero-phone-secondary {
-    position: absolute; right: -30px; top: 60px;
-    width: 240px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    opacity: 0.8;
-    transform: perspective(1000px) rotateY(-8deg) translateZ(-40px);
-  }
-
-  /* --- FEATURES --- */
-  .features {
-    padding: 6rem 2rem;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .section-label {
-    color: var(--accent);
-    font-size: 0.85rem; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 2px;
-    margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-    font-weight: 700;
-    margin-bottom: 3.5rem;
-  }
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  .feature-card {
-    background: var(--bg-card);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 2rem;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .feature-card:hover {
-    border-color: rgba(61, 214, 181, 0.2);
-    transform: translateY(-4px);
-  }
-  .feature-icon {
-    width: 48px; height: 48px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-  .feature-icon.teal { background: rgba(61, 214, 181, 0.12); }
-  .feature-icon.purple { background: rgba(155, 109, 255, 0.12); }
-  .feature-icon.pink { background: rgba(255, 107, 157, 0.12); }
-  .feature-icon.blue { background: rgba(100, 149, 237, 0.12); }
-  .feature-card h3 {
-    font-size: 1.15rem; font-weight: 600;
-    margin-bottom: 0.6rem;
-  }
-  .feature-card p {
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
-  /* --- SCREENSHOTS --- */
-  .screenshots {
-    padding: 6rem 0;
-    overflow: hidden;
-    max-width: 100vw;
-  }
-  .screenshots .section-label,
-  .screenshots .section-title {
-    text-align: center;
-    padding: 0 2rem;
-  }
-  .scroll-container {
-    display: flex;
-    gap: 1.5rem;
-    padding: 1rem 2rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .scroll-container::-webkit-scrollbar { display: none; }
-  .scroll-container img {
-    width: 240px; flex-shrink: 0;
-    border-radius: 20px;
-    scroll-snap-align: center;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s;
-  }
-  .scroll-container img:hover { transform: translateY(-6px); }
-
-  /* --- BUBBLE --- */
-  .bubble-section {
-    padding: 6rem 2rem;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .bubble-content {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4rem; align-items: center;
-  }
-  .bubble-phone-mock {
-    justify-self: center;
-    position: relative;
-    width: 260px; height: 520px;
-    background: #1a1a2e;
-    border-radius: 36px;
-    border: 3px solid #2a2a3e;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-  }
-  .bubble-phone-mock::before {
-    content: '';
-    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 80px; height: 6px;
-    background: #2a2a3e; border-radius: 3px;
-  }
-  .bubble-phone-screen {
-    position: absolute; top: 30px; left: 8px; right: 8px; bottom: 8px;
-    border-radius: 24px;
-    background: linear-gradient(180deg, #0d1b2a 0%, #1b2838 50%, #0d1b2a 100%);
-    overflow: hidden;
-  }
-  .bubble-screen-content {
-    padding: 24px 16px;
-    height: 100%;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .bubble-screen-bar {
-    height: 28px; border-radius: 14px;
-    background: rgba(255,255,255,0.06);
-  }
-  .bubble-screen-line {
-    height: 10px; border-radius: 5px;
-    background: rgba(255,255,255,0.04);
-  }
-  .bubble-screen-line.short { width: 60%; }
-  .bubble-screen-line.med { width: 85%; }
-  .bubble-screen-block {
-    flex: 1; border-radius: 12px;
-    background: rgba(255,255,255,0.03);
-    margin-top: 8px;
-  }
-  .bubble-icon-float {
-    position: absolute;
-    right: 0; top: 45%;
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(61, 214, 181, 0.4), 0 2px 8px rgba(0,0,0,0.3);
-    animation: bubble-pulse 3s ease-in-out infinite;
-    z-index: 10;
-    cursor: pointer;
-  }
-  @keyframes bubble-pulse {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  .bubble-text h2 {
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-  .bubble-text p {
-    color: var(--text-dim);
-    font-size: 1.05rem;
-    margin-bottom: 1.5rem;
-  }
-  .bubble-features {
-    list-style: none;
-    display: flex; flex-direction: column; gap: 0.75rem;
-  }
-  .bubble-features li {
-    display: flex; align-items: center; gap: 0.75rem;
-    color: var(--text-dim);
-    font-size: 0.95rem;
-  }
-  .bubble-features li::before {
-    content: '';
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    flex-shrink: 0;
-  }
-
-  /* --- CTA --- */
-  .final-cta {
-    text-align: center;
-    padding: 6rem 2rem;
-    position: relative;
-  }
-  .final-cta::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, rgba(61, 214, 181, 0.06) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .final-cta h2 {
-    font-size: clamp(2rem, 4vw, 2.8rem);
-    font-weight: 800;
-    margin-bottom: 1rem;
-  }
-  .final-cta p {
-    color: var(--text-dim);
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-  }
-
-  /* --- FOOTER --- */
-  footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 2.5rem 2rem;
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
-  }
-  .footer-brand {
-    display: flex; align-items: center; gap: 0.5rem;
-    color: var(--text-dim); font-size: 0.9rem;
-  }
-  .footer-brand img { width: 24px; height: 24px; border-radius: 6px; }
-  .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a {
-    color: var(--text-dim); text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-  .footer-links a:hover { color: var(--accent); }
-
-  /* --- RESPONSIVE --- */
-  @media (max-width: 768px) {
-    nav { padding: 0.75rem 1rem; }
+  @font-face { font-family: Manrope; src: url('assets/landing-v5/fonts/Manrope.ttf') format('truetype'); font-weight: 200 800; font-display: swap; }
+  @font-face { font-family: Barlow; src: url('assets/landing-v5/fonts/BarlowCondensed-ExtraBold.ttf') format('truetype'); font-weight: 800; font-display: swap; }
+  :root { color-scheme: dark; --bg: #151617; --surface: #202122; --cream: #f8f3e8; --muted: #bcbcb7; --coral: #ff794c; --line: #424344; --ink: #191a1b; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+  body { margin: 0; background: var(--bg); color: var(--cream); font-family: Manrope, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, p, figure { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+  img { display: block; max-width: 100%; height: auto; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 3px solid var(--coral); outline-offset: 5px; }
+  .skip-link { position: fixed; top: -100px; left: 20px; background: var(--cream); color: var(--ink); padding: 12px 20px; z-index: 100; }
+  .skip-link:focus { top: 12px; }
+  .wrap { width: min(1200px, calc(100% - 96px)); margin-inline: auto; }
+  .site-nav { position: sticky; top: 0; z-index: 20; background: #151617f5; border-bottom: 1px solid var(--line); }
+  .nav-inner { min-height: 86px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .brand { display: inline-flex; gap: 10px; align-items: center; font-weight: 800; font-size: 26px; letter-spacing: -1.3px; }
+  .brand img { width: 32px; height: 32px; border-radius: 9px; }
+  .nav-right, .nav-links { display: flex; align-items: center; gap: 30px; }
+  .nav-links a { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .nav-links a:hover, .footer-links a:hover { color: var(--coral); }
+  .lang-btn { color: var(--cream); border: 1px solid var(--line); border-radius: 6px; background: transparent; padding: 9px 16px; min-height: 44px; font-size: 13px; }
+  .lang-btn:hover { border-color: var(--cream); }
+  .eyebrow { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.8px; }
+  .coral { color: var(--coral); }
+  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; padding-block: 66px 64px; }
+  .hero .eyebrow { display: flex; align-items: center; gap: 9px; margin-bottom: 26px; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
+  h1 { font-family: Barlow, sans-serif; font-size: clamp(78px, 8.2vw, 118px); font-weight: 800; line-height: .94; letter-spacing: -1.5px; text-transform: uppercase; }
+  h1 span { display: block; }
+  .hero-desc { max-width: 450px; margin-top: 26px; color: var(--muted); font-size: 16px; line-height: 1.8; }
+  .cta-group { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; margin-top: 30px; }
+  .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 54px; padding: 14px 22px; background: var(--coral); color: var(--ink); border: 1px solid transparent; border-radius: 6px; font-size: 14px; font-weight: 800; transition: background .2s; }
+  .btn-primary:hover { background: #ff956f; }
+  .btn-primary svg { width: 20px; height: 22px; flex: none; }
+  .text-link { font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--line); padding-block: 8px; }
+  .text-link:hover { border-color: var(--coral); }
+  .download-note { margin-top: 16px; color: var(--muted); font-size: 11px; }
+  .hero-visual { min-width: 0; }
+  .demo { position: relative; padding-top: 6px; }
+  .video-scene { position: relative; height: 290px; overflow: hidden; border: 1px solid #625046; border-radius: 16px; background: #2a2521; }
+  .video-scene::before { content: ''; position: absolute; top: -110px; left: 30%; width: 48px; height: 550px; background: #ffbc8729; transform: rotate(30deg); box-shadow: 95px 0 #ffb3691c, 245px 0 #fc9d4b14; }
+  .video-scene::after { content: ''; position: absolute; right: -30px; top: -70px; width: 260px; height: 260px; border: 1px solid #ce8e5240; border-radius: 50%; box-shadow: 0 0 0 35px #a16d4112, 0 0 0 75px #a16d410c; }
+  .video-label { position: absolute; top: 22px; left: 24px; font-size: 10px; letter-spacing: 1.5px; font-weight: 800; }
+  .play-symbol { position: absolute; left: calc(50% - 26px); top: 74px; width: 52px; height: 52px; border: 1px solid #f8f3e880; border-radius: 50%; display: grid; place-items: center; }
+  .play-symbol svg { width: 14px; height: 18px; margin-left: 3px; }
+  .video-progress { position: absolute; top: 156px; left: 24px; right: 24px; height: 2px; background: #f8f3e840; }
+  .video-progress::before { content: ''; display: block; width: 43%; height: 100%; background: var(--cream); }
+  .bubble-hint { position: absolute; top: 195px; left: 24px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 14px; }
+  .bubble-hint span:last-child { color: var(--coral); font-size: 24px; }
+  .bubble-toggle { position: absolute; z-index: 2; top: 170px; right: 24px; width: 70px; height: 70px; display: grid; place-items: center; padding: 3px; border: 3px solid var(--coral); border-radius: 50%; background: #272837; box-shadow: 0 5px 20px #0005; transition: transform .2s; }
+  .bubble-toggle:hover { transform: scale(1.08); }
+  .bubble-toggle img { width: 56px; height: 56px; border-radius: 50%; }
+  .panel-space { position: relative; margin-top: -45px; min-height: 260px; }
+  .bubble-panel { width: 100%; border-radius: 18px; box-shadow: 0 18px 36px #0004; }
+  .bubble-panel[hidden] { display: block; visibility: hidden; }
+  .hero-visual figcaption { margin-top: 16px; font-size: 10px; color: var(--muted); }
+  .hero-visual figcaption span + span::before { content: ' · '; }
+  .flow { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 24px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+  .flow-title { font-size: 13px; font-weight: 700; }
+  .flow ol { list-style: none; padding: 0; margin: 0; display: flex; align-items: center; gap: 42px; }
+  .flow li { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .step { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid var(--line); border-radius: 50%; color: var(--coral); font-size: 10px; font-weight: 800; flex: none; }
+  .toolkit { padding-block: 90px; }
+  .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 36px; margin-bottom: 32px; }
+  .section-heading .eyebrow { color: var(--coral); margin-bottom: 12px; }
+  h2 { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.2; font-weight: 800; letter-spacing: -1.5px; }
+  .section-heading > p { color: var(--muted); font-size: 13px; max-width: 300px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .tool { min-width: 0; display: flex; flex-direction: column; padding: 28px; border-radius: 12px; }
+  .tool.light { background: #f4f0e7; color: var(--ink); }
+  .tool.orange { background: var(--coral); color: var(--ink); }
+  .tool.dark { background: var(--surface); border: 1px solid var(--line); }
+  .tool-top { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 22px; }
+  .tool-top span:last-child { opacity: .65; }
+  h3 { font-size: 26px; line-height: 1.25; font-weight: 800; letter-spacing: -.8px; }
+  .tool-desc { margin-top: 14px; font-size: 13px; line-height: 1.7; min-height: 88px; }
+  .light .tool-desc { color: #53554f; }
+  .orange .tool-desc { color: #382b24; }
+  .dark .tool-desc { color: var(--muted); }
+  .example { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: clamp(22px, 2.3vw, 32px); font-weight: 800; letter-spacing: -1px; padding-block: 22px; }
+  .example .arrow { color: #b63b13; font-weight: 500; }
+  .sound-example { flex-direction: column; align-items: start; gap: 0; }
+  .sound-example span:last-child { font-size: 25px; }
+  .tool-ui { margin-top: auto; padding-top: 12px; }
+  .tool-ui img { width: 100%; border-radius: 10px; }
+  .key-ui img:first-child { border-radius: 10px 10px 0 0; }
+  .key-ui img:last-child { border-radius: 0 0 10px 10px; }
+  .tool-note { font-size: 10px; margin-top: 18px; }
+  .phrase-steps { display: flex; justify-content: space-between; gap: 8px; color: var(--coral); font-size: 12px; font-weight: 700; padding-block: 30px; }
+  .personal { background: #f4f0e7; color: var(--ink); padding-block: 76px; }
+  .personal-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; }
+  .personal .eyebrow { color: #b63b13; margin-bottom: 18px; }
+  .personal h2 { max-width: 460px; }
+  .personal p.description { color: #53554f; font-size: 15px; margin-top: 20px; max-width: 420px; }
+  .name-example { display: inline-block; font-size: 28px; margin-top: 28px; letter-spacing: -1px; }
+  .name-example strong { border-bottom: 3px solid var(--coral); padding-bottom: 5px; }
+  .personal figure { max-width: 450px; }
+  .personal img { border-radius: 14px; width: 100%; box-shadow: 10px 10px 0 #d7d3c8; }
+  .personal figcaption { margin-top: 22px; font-size: 10px; color: #53554f; }
+  .theme { padding-block: 80px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; }
+  .theme figure { max-width: 390px; justify-self: center; }
+  .theme img { border-radius: 16px; width: 100%; }
+  .theme .eyebrow { color: var(--coral); margin-bottom: 18px; }
+  .theme .description { max-width: 420px; color: var(--muted); margin-top: 20px; font-size: 15px; }
+  .swatches { display: flex; gap: 10px; margin-top: 30px; }
+  .swatches i { height: 8px; width: 54px; background: var(--cream); }
+  .swatches i:nth-child(2) { background: var(--coral); }
+  .swatches i:nth-child(3) { background: #727986; }
+  .swatches i:nth-child(4) { background: #cdba9c; }
+  .purchase-note { color: var(--muted); font-size: 11px; margin-top: 22px; }
+  .final-cta { background: var(--coral); color: var(--ink); padding-block: 66px; }
+  .final-inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+  .final-cta h2 { font-family: Barlow, sans-serif; font-size: clamp(54px, 5.6vw, 80px); line-height: 1; text-transform: uppercase; }
+  .final-cta p { margin-top: 15px; font-size: 13px; }
+  .final-cta .btn-primary { flex: none; color: var(--cream); background: var(--ink); }
+  .final-cta .btn-primary:hover { background: #333536; }
+  footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 32px; }
+  .footer-brand { display: flex; align-items: center; gap: 20px; }
+  .footer-brand strong { font-size: 20px; letter-spacing: -.8px; }
+  .footer-brand span, .footer-links { font-size: 11px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  html[lang="ko"] h1 { font-family: inherit; font-size: clamp(54px, 5.3vw, 76px); line-height: 1.16; letter-spacing: -3px; word-break: keep-all; }
+  html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] p { word-break: keep-all; }
+  html[lang="ko"] .final-cta h2 { font-family: inherit; font-size: clamp(36px, 4vw, 54px); letter-spacing: -2px; line-height: 1.25; }
+  @media (min-width: 1500px) { .hero { padding-block: 90px; } }
+  @media (max-width: 1050px) { .wrap { width: calc(100% - 64px); } .hero { gap: 36px; } .nav-links { gap: 20px; } .flow ol { gap: 20px; } .tool { padding: 22px; } .personal-inner, .theme { gap: 45px; } }
+  @media (max-width: 760px) {
+    html { scroll-padding-top: 85px; }
+    .wrap { width: calc(100% - 40px); }
+    .nav-inner { min-height: 72px; }
+    .brand { font-size: 23px; }
     .nav-links { display: none; }
-    .hero { padding: 6rem 1.5rem 3rem; }
-    .hero-content { grid-template-columns: 1fr; text-align: center; gap: 2.5rem; }
-    .hero-desc { margin-left: auto; margin-right: auto; }
-    .cta-group { justify-content: center; }
-    .hero-phone { width: 220px; transform: none; }
-    .hero-phone:hover { transform: none; }
-    .hero-phone-secondary { display: none; }
-    .bubble-content { grid-template-columns: 1fr; text-align: center; }
-    .bubble-phone-mock { width: 220px; height: 440px; }
-    .bubble-features { align-items: center; }
-    .scroll-container { padding: 1rem 1rem; gap: 0.75rem; scroll-padding: 0 1rem; }
-    .scroll-container img { width: 200px; }
-    footer { flex-direction: column; text-align: center; }
+    .hero { grid-template-columns: 1fr; gap: 40px; padding-block: 38px 32px; }
+    h1 { font-size: clamp(78px, 17vw, 112px); }
+    html[lang="ko"] h1 { font-size: clamp(50px, 10.8vw, 76px); }
+    .hero .eyebrow { font-size: 10px; margin-bottom: 22px; }
+    .hero-desc { font-size: 14px; margin-top: 22px; }
+    .cta-group { gap: 18px; margin-top: 24px; }
+    .btn-primary { font-size: 13px; padding-inline: 17px; }
+    .hero-visual { max-width: 520px; width: 100%; justify-self: center; }
+    .panel-space { min-height: 0; }
+    .flow { align-items: start; flex-direction: column; gap: 18px; }
+    .flow ol { width: 100%; justify-content: space-between; gap: 12px; }
+    .flow li { font-size: 11px; gap: 7px; }
+    .toolkit { padding-block: 54px; }
+    .section-heading { display: block; }
+    .section-heading > p { margin-top: 16px; }
+    h2 { font-size: 32px; letter-spacing: -1px; }
+    .tools-grid { grid-template-columns: 1fr; gap: 20px; }
+    .tool { padding: 28px; }
+    .tool-desc { min-height: 0; }
+    .example { font-size: 32px; }
+    .tool-ui { max-width: 390px; width: 100%; align-self: center; }
+    .sound-example { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .sound-example span:last-child { font-size: 23px; }
+    .personal { padding-block: 50px; }
+    .personal-inner, .theme { grid-template-columns: 1fr; gap: 36px; }
+    .personal figure { justify-self: center; width: calc(100% - 10px); }
+    .theme { padding-block: 50px; }
+    .theme .theme-copy { grid-row: 1; }
+    .theme figure { max-width: 360px; width: 100%; }
+    .final-cta { padding-block: 48px; }
+    .final-inner { flex-direction: column; align-items: start; gap: 26px; }
+    footer { flex-direction: column; align-items: start; gap: 20px; }
   }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a class="nav-brand" href="#">
-    <img src="assets/store/app-icon-512.png" alt="Fangeul icon">
-    <span>Fangeul</span>
-  </a>
-  <div class="nav-links">
-    <a href="#features" data-i18n="nav_features">Features</a>
-    <a href="#screenshots" data-i18n="nav_screenshots">Screenshots</a>
-    <a href="#bubble" data-i18n="nav_bubble">Bubble</a>
-    <a href="privacy-policy.html" data-i18n="nav_privacy">Privacy</a>
-    <button class="lang-btn" onclick="toggleLang()">한국어</button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-content">
-    <div class="hero-text">
-      <div class="hero-badge" data-i18n="hero_badge">Android App</div>
-      <h1 data-i18n-html="hero_title">Say it in Korean.<br><span class="gradient-text">Mean it as a fan.</span></h1>
-      <p class="hero-desc" data-i18n="hero_desc">
-        Write to your idol in Korean — even without a Korean keyboard. Type, convert, pronounce, and share fan phrases from a floating bubble that works over any app.
-      </p>
-      <div class="cta-group">
-        <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.tigerroom.fangeul">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.144 1.24a1 1 0 0 1 0 1.724l-2.144 1.24-2.53-2.53 2.53-2.53zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/></svg>
-          <span data-i18n="cta_play">Get on Google Play</span>
-        </a>
-        <a class="btn-secondary" href="#features" data-i18n="cta_learn">Learn more</a>
+<a class="skip-link" href="#main"><span data-i18n="skip">Skip to content</span></a>
+<header class="site-nav">
+  <nav class="nav-inner wrap" aria-label="Main">
+    <a class="brand" href="./"><img src="assets/store/app-icon-512.png" alt="" width="32" height="32">fangeul</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#bubble"><span data-i18n="nav_bubble">The bubble</span></a>
+        <a href="#features"><span data-i18n="nav_features">The toolkit</span></a>
+        <a href="#personal"><span data-i18n="nav_personal">Make it yours</span></a>
       </div>
+      <button class="lang-btn" type="button" onclick="toggleLang()" lang="ko">한국어</button>
     </div>
-    <div class="hero-visual">
-      <img class="hero-phone" src="assets/screen-shot-v2/s1.png" alt="Fangeul home screen">
-      <img class="hero-phone-secondary" src="assets/screen-shot-v2/s5.png" alt="Fangeul phrases screen">
+  </nav>
+</header>
+<main id="main">
+  <section class="hero wrap" id="bubble" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span><span data-i18n="hero_badge">Korean for K-pop fans · Android</span></p>
+      <h1 id="hero-title" data-i18n-html="hero_title">Korean.<span>One tap</span><span class="coral">away.</span></h1>
+      <p class="hero-desc" data-i18n="hero_desc">Keep watching. Keep the words close. Type Korean, check pronunciation, and find your next fan message — from a floating bubble over the app you’re in.</p>
+      <div class="cta-group"><a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.tigerroom.fangeul"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.144 1.24a1 1 0 0 1 0 1.724l-2.144 1.24-2.53-2.53 2.53-2.53zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/></svg><span data-i18n="cta_play">Get on Google Play</span></a><a class="text-link" href="#features"><span data-i18n="cta_learn">Explore the toolkit ↘</span></a></div>
+      <p class="download-note" data-i18n="download_note">Free download · No account needed</p>
     </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <p class="section-label" data-i18n="features_label">Features</p>
-  <h2 class="section-title" data-i18n="features_title">Your Korean toolkit, always one tap away</h2>
-  <div class="feature-grid">
-    <div class="feature-card">
-      <div class="feature-icon teal">&#x2328;</div>
-      <h3 data-i18n="f1_title">Type Korean instantly</h3>
-      <p data-i18n-html="f1_desc">No Korean keyboard? No problem. Type <code>gksrmf</code> and get <code>한글</code>. Your English keys become Korean keys.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon purple">&#x21C4;</div>
-      <h3 data-i18n="f2_title">Decode any Korean text</h3>
-      <p data-i18n="f2_desc">Paste Korean and see which keys typed it. Perfect for learning how words are built.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon pink">&#x1F524;</div>
-      <h3 data-i18n="f3_title">Pronounce it right</h3>
-      <p data-i18n-html="f3_desc">See how to say any Korean word. <code>사랑해요</code> &rarr; <code>saranghaeyo</code>. Official romanization rules, not guesswork.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon blue">&#x1F4AC;</div>
-      <h3 data-i18n="f4_title">Ready-made fan phrases</h3>
-      <p data-i18n="f4_desc">Birthday wishes, concert cheers, love messages — all in Korean with pronunciation. Personalized with your idol's name.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon teal">&#x1F3A8;</div>
-      <h3 data-i18n="f5_title">Make it yours</h3>
-      <p data-i18n="f5_desc">Match your bias group's color. Full color picker, saveable palettes, and themes that feel like your fandom.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon purple">&#x2B50;</div>
-      <h3 data-i18n="f6_title">Copy & share in one tap</h3>
-      <p data-i18n="f6_desc">Save your favorite phrases and paste them anywhere — Twitter, Weverse, fan cafes, group chats.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SCREENSHOTS -->
-<section class="screenshots" id="screenshots">
-  <p class="section-label" data-i18n="ss_label">See it in action</p>
-  <h2 class="section-title" data-i18n="ss_title">Designed for your fandom life</h2>
-  <div class="scroll-container">
-    <img src="assets/screen-shot-v2/s1.png" alt="Home — daily fan phrase" loading="lazy">
-    <img src="assets/screen-shot-v2/s2.png" alt="Key Swap — English to Korean" loading="lazy">
-    <img src="assets/screen-shot-v2/s3.png" alt="Key Swap — Korean to English" loading="lazy">
-    <img src="assets/screen-shot-v2/s4.png" alt="Romanizer — pronunciation" loading="lazy">
-    <img src="assets/screen-shot-v2/s5.png" alt="Fan phrases library" loading="lazy">
-    <img src="assets/screen-shot-v2/s6.png" alt="Theme customization" loading="lazy">
-    <img src="assets/screen-shot-v2/s8.png" alt="Floating bubble overlay" loading="lazy">
-  </div>
-</section>
-
-<!-- BUBBLE -->
-<section class="bubble-section" id="bubble">
-  <div class="bubble-content">
-    <div class="bubble-phone-mock">
-      <div class="bubble-phone-screen">
-        <div class="bubble-screen-content">
-          <div class="bubble-screen-bar"></div>
-          <div class="bubble-screen-line med"></div>
-          <div class="bubble-screen-line short"></div>
-          <div class="bubble-screen-line med"></div>
-          <div class="bubble-screen-line short"></div>
-          <div class="bubble-screen-block"></div>
+    <figure class="hero-visual">
+      <div class="demo">
+        <div class="video-scene" aria-hidden="true">
+          <span class="video-label" data-i18n="video_label">YOUR VIDEO, STILL HERE</span>
+          <div class="play-symbol"><svg viewBox="0 0 16 20"><path d="M1 1L15 10L1 19Z" fill="currentColor"/></svg></div>
+          <div class="video-progress"></div>
+          <div class="bubble-hint"><span data-i18n="bubble_hint">TRY THE BUBBLE</span><span>↗</span></div>
         </div>
+        <button class="bubble-toggle" type="button" aria-expanded="true" aria-controls="bubble-panel" onclick="toggleBubble()">
+          <img src="assets/landing-v5/fangeul-icon.png" alt="" width="56" height="56">
+        </button>
+        <div class="panel-space" id="bubble-panel"><img src="assets/landing-v5/bubble-panel.png" alt="Fangeul floating panel with favorite Korean phrases, pronunciation, and copy icons" data-i18n-alt="alt_bubble_panel" width="1080" height="810" class="bubble-panel"></div>
       </div>
-      <img class="bubble-icon-float" src="assets/store/app-icon-512.png" alt="Floating bubble icon">
+      <figcaption><span data-i18n="actual_panel">Actual app panel</span><span data-i18n="illustration">Illustrative video background</span></figcaption>
+    </figure>
+  </section>
+  <div class="flow wrap">
+    <p class="flow-title" data-i18n="flow_title">A little Korean. Without leaving the moment.</p>
+    <ol>
+      <li><span class="step">01</span><span data-i18n="step1">Open the bubble</span></li>
+      <li><span class="step">02</span><span data-i18n="step2">Find your words</span></li>
+      <li><span class="step">03</span><span data-i18n="step3">Copy & paste</span></li>
+    </ol>
+  </div>
+  <section class="toolkit wrap" id="features" aria-labelledby="tools-title">
+    <div class="section-heading">
+      <div><p class="eyebrow" data-i18n="tools_label">Small tools. Big fan energy.</p><h2 id="tools-title" data-i18n="tools_title">Your words, in Korean.</h2></div>
+      <p data-i18n="tools_desc">From your first keystroke to a message worth sending.</p>
     </div>
-    <div class="bubble-text">
-      <p class="section-label" data-i18n="bubble_label">Floating Bubble</p>
-      <h2 data-i18n-html="bubble_title">Use it <span class="gradient-text">anywhere</span></h2>
-      <p data-i18n="bubble_desc">A floating bubble sits on top of any app. Convert, type, and browse phrases without leaving Twitter, Weverse, or your chat app.</p>
-      <ul class="bubble-features">
-        <li data-i18n="b1">Works over any app — no switching</li>
-        <li data-i18n="b2">Compact mini-converter popup</li>
-        <li data-i18n="b3">Quick access to your favorite phrases</li>
-        <li data-i18n="b4">Tap to expand, swipe to dismiss</li>
-      </ul>
+    <div class="tools-grid" id="screenshots">
+      <article class="tool light">
+        <div class="tool-top"><span data-i18n="key_label">Key swap</span><span>01 / 03</span></div>
+        <h3 data-i18n-html="key_title">Your keys.<br>Korean letters.</h3>
+        <p class="tool-desc" data-i18n="key_desc">Turn English keystrokes into Hangul. Go the other way to see the keys behind a Korean word, too.</p>
+        <div class="example"><span>gksrmf</span><span class="arrow" aria-hidden="true">→</span><span lang="ko">한글</span></div>
+        <figure class="tool-ui key-ui"><img src="assets/landing-v5/key-result.png" alt="Key Swap: gksrmf becomes 한글" data-i18n-alt="alt_key_result" width="1080" height="400" loading="lazy"><img src="assets/landing-v5/keyboard.png" alt="English keyboard with Korean key labels" data-i18n-alt="alt_keyboard" width="1080" height="590" loading="lazy"></figure>
+        <p class="tool-note" data-i18n="key_note">Keyboard conversion, not translation.</p>
+      </article>
+      <article class="tool orange">
+        <div class="tool-top"><span data-i18n="sound_label">Romanize</span><span>02 / 03</span></div>
+        <h3 data-i18n-html="sound_title">Read<br>the sound.</h3>
+        <p class="tool-desc" data-i18n="sound_desc">Paste Korean and see its pronunciation in Roman letters. A little help for the words you want to say.</p>
+        <div class="example sound-example"><span lang="ko">사랑해요</span><span>saranghaeyo</span></div>
+        <figure class="tool-ui"><img src="assets/landing-v5/roman-result.png" alt="Romanize: 사랑해요 becomes saranghaeyo" data-i18n-alt="alt_roman_result" width="1080" height="630" loading="lazy"></figure>
+        <p class="tool-note" data-i18n="sound_note">A pronunciation guide in your pocket.</p>
+      </article>
+      <article class="tool dark">
+        <div class="tool-top"><span data-i18n="phrases_label">Fan phrases</span><span>03 / 03</span></div>
+        <h3 data-i18n-html="phrases_title">Hear it. Copy it.<br>Send it.</h3>
+        <p class="tool-desc" data-i18n="phrases_desc">Birthday wishes, a little encouragement, a lot of love. Find Korean phrases with pronunciation and meaning.</p>
+        <div class="phrase-steps"><span data-i18n="listen">01 Listen</span><span data-i18n="copy">02 Copy</span><span data-i18n="paste">03 Paste</span></div>
+        <figure class="tool-ui"><img src="assets/landing-v5/phrase-love.png" alt="A 사랑해요 phrase card with pronunciation, meaning, audio, favorite, and copy controls" data-i18n-alt="alt_phrase_love" width="996" height="425" loading="lazy"></figure>
+        <p class="tool-note" data-i18n="phrases_note">Save your favorites. Keep them close.</p>
+      </article>
     </div>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="final-cta">
-  <h2 data-i18n-html="cta_title">Your idol reads Korean.<br><span class="gradient-text">Now you write it.</span></h2>
-  <p data-i18n="cta_sub">Free on Google Play. No account needed. No Korean keyboard required.</p>
-  <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.tigerroom.fangeul" style="font-size:1.1rem; padding:1rem 2.5rem;">
-    <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.144 1.24a1 1 0 0 1 0 1.724l-2.144 1.24-2.53-2.53 2.53-2.53zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/></svg>
-    <span data-i18n="cta_download">Download Fangeul</span>
-  </a>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-brand">
-    <img src="assets/store/app-icon-512.png" alt="Fangeul">
-    <span>&copy; 2026 Tiger Room</span>
-  </div>
-  <div class="footer-links">
-    <a href="privacy-policy.html" data-i18n="footer_privacy">Privacy Policy</a>
-    <a href="terms.html" data-i18n="footer_terms">Terms of Service</a>
-  </div>
+  </section>
+  <section class="personal" id="personal" aria-labelledby="personal-title">
+    <div class="personal-inner wrap">
+      <div><p class="eyebrow" data-i18n="personal_label">Your favorite name, included</p>
+        <h2 id="personal-title" data-i18n-html="personal_title">Make it<br>personal.</h2>
+        <p class="description" data-i18n="personal_desc">Add a favorite name to your fan phrases. The same little message, with a little more you in it.</p>
+        <p class="name-example" lang="ko"><strong>Fangeul</strong> 사랑해요!</p>
+      </div>
+      <figure><img src="assets/landing-v5/personal-phrases.png" alt="Personalized Korean phrase cards using the example name Fangeul" data-i18n-alt="alt_personal_phrases" width="1080" height="960" loading="lazy"><figcaption><span data-i18n="personal_note">Actual app · “Fangeul” is an example name.</span></figcaption></figure>
+    </div>
+  </section>
+  <section class="theme wrap" aria-labelledby="theme-title">
+    <figure><img src="assets/landing-v5/theme-picker.png" alt="Theme picker showing the default teal theme and locked premium colors" data-i18n-alt="alt_theme_picker" width="1080" height="1192" loading="lazy"></figure>
+    <div class="theme-copy"><p class="eyebrow" data-i18n="theme_label">A space that feels like you</p>
+      <h2 id="theme-title" data-i18n-html="theme_title">Your vibe.<br><span class="coral">Your color.</span></h2>
+      <p class="description" data-i18n="theme_desc">Start with Fangeul’s signature teal. Explore themes, pick your own colors, and save a palette that feels like you.</p>
+      <div class="swatches" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <p class="purchase-note" data-i18n="purchase_note">Some customization options require an in-app purchase.</p>
+    </div>
+  </section>
+  <section class="final-cta" aria-labelledby="cta-title">
+    <div class="final-inner wrap"><div><h2 id="cta-title" data-i18n-html="cta_title">A little Korean.<br>A lot of heart.</h2><p data-i18n="cta_desc">Your next fan message starts here. Free to download on Android.</p></div><a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.tigerroom.fangeul"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.144 1.24a1 1 0 0 1 0 1.724l-2.144 1.24-2.53-2.53 2.53-2.53zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/></svg><span data-i18n="cta_download">Download Fangeul</span></a></div>
+  </section>
+</main>
+<footer class="wrap">
+  <div class="footer-brand"><strong>fangeul</strong><span>© 2026 Tiger Room</span></div>
+  <div class="footer-links"><a href="privacy-policy.html"><span data-i18n="footer_privacy">Privacy Policy</span></a><a href="terms.html"><span data-i18n="footer_terms">Terms of Service</span></a></div>
 </footer>
 
 <script>
+
 var lang = 'en';
-var T = {
-  ko: {
-    nav_features: '기능',
-    nav_screenshots: '스크린샷',
-    nav_bubble: '버블',
-    nav_privacy: '개인정보',
-    hero_badge: 'Android 앱',
-    hero_title: '한국어로 말해봐.<br><span class="gradient-text">팬의 마음을 담아서.</span>',
-    hero_desc: '한글 키보드 없이도 최애에게 한국어로 쓸 수 있어요. 입력, 변환, 발음, 팬 문구까지 — 어떤 앱 위에서든 버블 하나로.',
-    cta_play: 'Google Play에서 받기',
-    cta_learn: '더 알아보기',
-    features_label: '기능',
-    features_title: '한국어 도구, 항상 한 탭 거리에',
-    f1_title: '바로 한글 입력',
-    f1_desc: '한글 키보드 없어도 괜찮아요. <code>gksrmf</code> 치면 <code>한글</code>이 돼요.',
-    f2_title: '한글 텍스트 해독',
-    f2_desc: '한글을 붙여넣으면 어떤 키로 쳤는지 보여줘요. 단어 구조를 배우기 딱.',
-    f3_title: '정확한 발음 확인',
-    f3_desc: '<code>사랑해요</code> → <code>saranghaeyo</code>. 국립국어원 공식 규정 기반, 추측 아닌 정확한 발음.',
-    f4_title: '바로 쓰는 팬 문구',
-    f4_desc: '생일 축하, 콘서트 응원, 사랑 고백 — 발음과 번역 포함. 최애 이름으로 개인화.',
-    f5_title: '나만의 감성으로',
-    f5_desc: '최애 그룹 컬러에 맞춰 꾸며보세요. 컬러 피커 + 저장 가능한 팔레트.',
-    f6_title: '복사해서 바로 공유',
-    f6_desc: '좋아하는 문구를 저장하고 어디든 붙여넣기 — 트위터, 위버스, 팬카페, 단톡방.',
-    ss_label: '직접 확인하세요',
-    ss_title: '팬덤 생활을 위한 디자인',
-    bubble_label: '플로팅 버블',
-    bubble_title: '<span class="gradient-text">어디서든</span> 사용하세요',
-    bubble_desc: '플로팅 버블이 모든 앱 위에 떠 있습니다. 트위터, 위버스, 채팅 앱을 벗어나지 않고 변환하고 문구를 탐색하세요.',
-    b1: '모든 앱 위에서 동작 — 전환 불필요',
-    b2: '컴팩트 미니 변환기 팝업',
-    b3: '즐겨찾기 문구에 빠른 접근',
-    b4: '탭으로 열고, 스와이프로 닫기',
-    cta_title: '최애는 한국어를 읽어요.<br><span class="gradient-text">이제 당신이 써보세요.</span>',
-    cta_sub: 'Google Play에서 무료. 계정 필요 없음. 한글 키보드 없어도 OK.',
-    cta_download: 'Fangeul 다운로드',
-    footer_privacy: '개인정보처리방침',
-    footer_terms: '이용약관',
-  }
-};
+var T = { ko: {
+  "skip": "본문으로 바로가기",
+  "nav_bubble": "플로팅 버블",
+  "nav_features": "한국어 도구",
+  "nav_personal": "나만의 Fangeul",
+  "hero_badge": "K-pop 팬을 위한 한국어 도구 · Android",
+  "hero_title": "한국어가<span>필요한 순간,</span><span class=\"coral\">버블 한 번.</span>",
+  "hero_desc": "영상은 그대로, 하고 싶은 말은 한국어로. 보고 있던 앱 위에서 버블을 열어 한글을 입력하고, 발음을 확인하고, 팬 문구를 찾아보세요.",
+  "cta_play": "Google Play에서 받기",
+  "cta_learn": "기능 살펴보기 ↘",
+  "download_note": "무료 다운로드 · 회원가입 없이",
+  "video_label": "보고 있던 영상, 그대로",
+  "bubble_hint": "버블을 눌러보세요",
+  "alt_bubble_panel": "즐겨찾는 한국어 문구, 발음, 복사 아이콘이 있는 Fangeul 플로팅 패널",
+  "actual_panel": "실제 앱 패널",
+  "illustration": "영상 배경은 설명용 이미지입니다",
+  "flow_title": "앱을 오가지 않고, 지금 이 순간에 한국어를.",
+  "step1": "버블 열기",
+  "step2": "문구 찾기",
+  "step3": "복사·붙여넣기",
+  "tools_label": "작은 도구에 담은, 커다란 팬심",
+  "tools_title": "팬의 마음을, 한국어로.",
+  "tools_desc": "첫 한글 입력부터 마음을 전하는 메시지까지.",
+  "key_label": "키 변환",
+  "key_title": "익숙한 영문 키로,<br>한글 입력.",
+  "key_desc": "영문 키 입력을 한글로 바꿔보세요. 반대로 한글을 입력하면 어떤 영문 키로 쓰는지도 알 수 있어요.",
+  "alt_key_result": "키 변환: gksrmf가 한글로 변환된 화면",
+  "alt_keyboard": "한글 자판 위치를 함께 표시한 영문 키보드",
+  "key_note": "번역이 아닌, 자판 입력 변환 기능입니다.",
+  "sound_label": "로마자 발음",
+  "sound_title": "한글의 소리를<br>읽어보세요.",
+  "sound_desc": "한글을 붙여넣으면 로마자로 발음을 보여줘요. 말하고 싶은 한국어를 읽는 작은 도움.",
+  "alt_roman_result": "로마자 발음: 사랑해요를 saranghaeyo로 표시한 화면",
+  "sound_note": "주머니 속 작은 발음 가이드.",
+  "phrases_label": "팬 문구",
+  "phrases_title": "듣고, 복사하고,<br>마음을 전해요.",
+  "phrases_desc": "생일 축하, 따뜻한 응원, 좋아하는 마음까지. 뜻과 발음이 함께 있는 한국어 문구를 찾아보세요.",
+  "listen": "01 듣기",
+  "copy": "02 복사",
+  "paste": "03 붙여넣기",
+  "alt_phrase_love": "사랑해요 문구의 발음, 뜻, 듣기, 즐겨찾기, 복사 기능",
+  "phrases_note": "좋아하는 문구는 즐겨찾기에 모아두세요.",
+  "personal_label": "좋아하는 이름을 담아서",
+  "personal_title": "이름 하나로,<br>더 특별하게.",
+  "personal_desc": "팬 문구에 좋아하는 이름을 넣어보세요. 같은 한마디도 내 마음에 조금 더 가까워져요.",
+  "alt_personal_phrases": "예시 이름 Fangeul이 들어간 한국어 팬 문구 카드",
+  "personal_note": "실제 앱 화면 · 이름은 예시로 “Fangeul”을 사용했습니다.",
+  "alt_theme_picker": "기본 틸 테마와 잠금 표시가 있는 유료 색상 선택 화면",
+  "theme_label": "내 취향을 닮은 공간",
+  "theme_title": "내 취향대로.<br><span class=\"coral\">내 색깔대로.</span>",
+  "theme_desc": "Fangeul의 기본 틸 컬러로 시작해보세요. 테마를 고르고, 원하는 색을 조합하고, 나만의 팔레트를 저장할 수 있어요.",
+  "purchase_note": "일부 꾸미기 기능은 인앱 구매가 필요합니다.",
+  "cta_title": "한국어 한마디에,<br>팬의 마음을 가득.",
+  "cta_desc": "다음 팬 메시지는 여기서 시작해요. Android에서 무료로 다운로드하세요.",
+  "cta_download": "Fangeul 다운로드",
+  "footer_privacy": "개인정보처리방침",
+  "footer_terms": "이용약관",
+  "bubble_close": "버블 패널 닫기",
+  "bubble_open": "버블 패널 열기"
+} };
 
-function setLang(l) {
-  lang = l;
-  document.documentElement.lang = l;
-  document.querySelector('.lang-btn').textContent = l === 'en' ? '한국어' : 'English';
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n');
-    el.textContent = l === 'ko' ? T.ko[key] : el.getAttribute('data-en');
-  });
-  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n-html');
-    el.innerHTML = l === 'ko' ? T.ko[key] : el.getAttribute('data-en-html');
-  });
-}
-
-function toggleLang() { setLang(lang === 'en' ? 'ko' : 'en'); }
-
-// Save English defaults on load
+// Preserve English markup as the source for the existing KO/EN i18n structure.
 document.querySelectorAll('[data-i18n]').forEach(function(el) {
   el.setAttribute('data-en', el.textContent);
 });
 document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
   el.setAttribute('data-en-html', el.innerHTML);
 });
+document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+  el.setAttribute('data-en-alt', el.alt);
+});
 
-// Auto-detect Korean browser
-if (navigator.language.startsWith('ko')) setLang('ko');
+function updateBubbleLabel() {
+  var button = document.querySelector('.bubble-toggle');
+  var open = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-label', lang === 'ko'
+    ? T.ko[open ? 'bubble_close' : 'bubble_open']
+    : (open ? 'Close bubble panel' : 'Open bubble panel'));
+}
+
+function setLang(l) {
+  lang = l === 'ko' ? 'ko' : 'en';
+  document.documentElement.lang = lang;
+  var button = document.querySelector('.lang-btn');
+  button.textContent = lang === 'en' ? '한국어' : 'English';
+  button.lang = lang === 'en' ? 'ko' : 'en';
+  document.querySelector('nav').setAttribute('aria-label', lang === 'ko' ? '주 메뉴' : 'Main');
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    el.textContent = lang === 'ko' ? T.ko[el.getAttribute('data-i18n')] : el.getAttribute('data-en');
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    el.innerHTML = lang === 'ko' ? T.ko[el.getAttribute('data-i18n-html')] : el.getAttribute('data-en-html');
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+    el.alt = lang === 'ko' ? T.ko[el.getAttribute('data-i18n-alt')] : el.getAttribute('data-en-alt');
+  });
+  updateBubbleLabel();
+}
+
+function toggleLang() { setLang(lang === 'en' ? 'ko' : 'en'); }
+
+// The preview toggles a real app capture; it does not simulate conversion.
+function toggleBubble() {
+  var button = document.querySelector('.bubble-toggle');
+  var open = button.getAttribute('aria-expanded') === 'true';
+  document.querySelector('.bubble-panel').hidden = open;
+  button.setAttribute('aria-expanded', String(!open));
+  updateBubbleLabel();
+}
+
+setLang(navigator.language.toLowerCase().startsWith('ko') ? 'ko' : 'en');
 </script>
-
 </body>
 </html>

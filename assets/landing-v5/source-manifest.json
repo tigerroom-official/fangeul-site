@@ -1,0 +1,48 @@
+{
+  "bubble-panel": {
+    "source": "assets/screen-shot-v3/s8_bubble_panel.png",
+    "crop": "1080x810+0+1304",
+    "source_sha256": "b80f941070b0b0475e2caf1404069121a9946687372b94c679a2e31eb4a33ccc",
+    "asset_sha256": "da393f8cd3e2c98388024ac3e3978e0de27843d7ea48723dd4e8da21f55395ed"
+  },
+  "key-result": {
+    "source": "assets/screen-shot-v3/s2_keyswap_eng_kor.png",
+    "crop": "1080x400+0+375",
+    "source_sha256": "afb73ff1f29498688e5c509af72b18347cb674063f277349c73771462c36c94f",
+    "asset_sha256": "90887e52532286ebec0ec7c2f604015a16a174357a1a442f8299a2da77680b11"
+  },
+  "keyboard": {
+    "source": "assets/screen-shot-v3/s2_keyswap_eng_kor.png",
+    "crop": "1080x590+0+1538",
+    "source_sha256": "afb73ff1f29498688e5c509af72b18347cb674063f277349c73771462c36c94f",
+    "asset_sha256": "c93529cd31e9f977c0a885d551951fc5a15ddc531ac62648b88611a22ebc65b4"
+  },
+  "roman-result": {
+    "source": "assets/screen-shot-v3/s3_romanize.png",
+    "crop": "1080x630+0+210",
+    "source_sha256": "e1d3daa2c0c936ce7d039ef19203da52edf918d7886032cba4d3de57651b168a",
+    "asset_sha256": "f1ab821cac243c630dcbbd9f115c73b0b6423a1f76abe15413d970e16b36d070"
+  },
+  "phrase-love": {
+    "source": "assets/screen-shot-v3/s4_phrases.png",
+    "crop": "996x425+42+373",
+    "source_sha256": "e402869c3fa6f8d14cbd74883defc6f1ed49f35af1a9e104620a439a3c98fda9",
+    "asset_sha256": "09429793ff9b9f9162e2b98cfdba0bb0c7b8bfd184ba6dd16361d5f91087ec64"
+  },
+  "personal-phrases": {
+    "source": "assets/screen-shot-v3/s5_phrases_personalized.png",
+    "crop": "1080x960+0+320",
+    "source_sha256": "e30b0b93ed5eab5d3b1812437481bb02e039749c7089f410b3b1e1b0c575c746",
+    "asset_sha256": "9b75ff5f7a2a2e9475e9530da0b0abd3f34e2bd3a3549c2850925883ca3fbb1c"
+  },
+  "theme-picker": {
+    "source": "assets/screen-shot-v3/s6_theme.png",
+    "crop": "1080x1192+0+998",
+    "source_sha256": "9a72237d6c2ac396bac78b5e48741c4b2a76f3bb8c34ff848050dade66fb01e0",
+    "asset_sha256": "6c9da537a400ea0dd1fff9d8e07edef3c6c7af49f7b2f7e9d58698798d338fe4"
+  },
+  "fangeul-icon": {
+    "source": "assets/marketing-v5/images/fangeul-icon.png",
+    "asset_sha256": "52f20207b137d6ac60e488b84c2fa14bb2251db96906cd65351da5e50cd3c539"
+  }
+}
